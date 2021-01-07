@@ -1,0 +1,725 @@
+\documentclass[10pt]{article}
+
+\usepackage[sc]{mathpazo}
+\linespread{1.05}
+\usepackage[T1]{fontenc}
+\usepackage{upgreek}
+
+% This is a helpful package that puts math inside length specifications
+\usepackage{calc}
+
+% Layout: Puts the section titles on left side of page
+\reversemarginpar
+
+%% Use these lines for letter-sized paper
+\usepackage[paper=letterpaper,
+            %includefoot, % Uncomment to put page number above margin
+            marginparwidth=1.2in,     % Length of section titles
+            marginparsep=0.05in,      % Space between titles and text
+            margin=0.8in,               % 1 inch margins
+            includemp]{geometry}
+
+%% Use these lines for A4-sized paper
+%\usepackage[paper=a4paper,
+%            %includefoot, % Uncomment to put page number above margin
+%            marginparwidth=30.5mm,    % Length of section titles
+%            marginparsep=1.5mm,       % Space between titles and text
+%            margin=25mm,              % 25mm margins
+%            includemp]{geometry}
+
+%% More layout: Get rid of indenting throughout entire document
+\setlength{\parindent}{0in}
+
+\usepackage[shortlabels]{enumitem}
+
+% Simpler bibsections for CV sections
+% (thanks to natbib for inspiration)
+%
+% * For lists of references with hanging indents and no numbers:
+%
+%   \begin{bibsection}
+%       \item ...
+%   \end{bibsection}
+%
+% * For numbered lists of references (with hanging indents):
+%
+%   \begin{bibenum}
+%       \item ...
+%   \end{bibenum}
+%
+%   Note that bibenum numbers continuously throughout. To reset the
+%   counter, use
+%
+%   \restartlist{bibenum}
+%
+%   at the place where you want the numbering to reset.
+
+\makeatletter
+\newlength{\bibhang}
+\setlength{\bibhang}{1em}
+\newlength{\bibsep}
+ {\@listi \global\bibsep\itemsep \global\advance\bibsep by\parsep}
+\newlist{bibsection}{itemize}{3}
+\setlist[bibsection]{label=,leftmargin=\bibhang,%
+        itemindent=-\bibhang,
+        itemsep=\bibsep,parsep=\z@,partopsep=0pt,
+        topsep=0pt}
+\newlist{bibenum}{enumerate}{3}
+\setlist[bibenum]{label=[\arabic*],resume,leftmargin={\bibhang+\widthof{[999]}},%
+        itemindent=-\bibhang,
+        itemsep=\bibsep,parsep=\z@,partopsep=0pt,
+        topsep=0pt}
+\let\oldendbibenum\endbibenum
+\def\endbibenum{\oldendbibenum\vspace{-.6\baselineskip}}
+\let\oldendbibsection\endbibsection
+\def\endbibsection{\oldendbibsection\vspace{-.6\baselineskip}}
+\makeatother
+
+%% Reference the last page in the page number
+%
+% NOTE: comment the +LP line and uncomment the -LP line to have page
+%       numbers without the ``of ##'' last page reference)
+%
+% NOTE: uncomment the \pagestyle{empty} line to get rid of all page
+%       numbers (make sure includefoot is commented out above)
+%
+\usepackage{fancyhdr,lastpage}
+\pagestyle{fancy}
+%\pagestyle{empty}      % Uncomment this to get rid of page numbers
+\fancyhf{}\renewcommand{\headrulewidth}{0pt}
+\fancyfootoffset{\marginparsep+\marginparwidth}
+\newlength{\footpageshift}
+\setlength{\footpageshift}
+          {0.5\textwidth+0.5\marginparsep+0.5\marginparwidth-2in}
+\lfoot{\hspace{\footpageshift}%
+       \parbox{4in}{\, \hfill %
+                    \arabic{page} of \protect\pageref*{LastPage} % +LP
+%                    \arabic{page}                               % -LP
+                    \hfill \,}}
+
+% Finally, give us PDF bookmarks
+\usepackage{color,hyperref}
+%\definecolor{darkblue}{cmyk}{0.995,0.560,0.000,0.243}
+\definecolor{darkblue}{RGB}{11,72,117}
+\hypersetup{colorlinks,breaklinks,
+            linkcolor=darkblue,urlcolor=darkblue,
+            anchorcolor=darkblue,citecolor=darkblue}
+
+%%%%%%%%%%%%%%%%%%%%%%%% End Document Setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% Helper Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% HEADING AT TOP OF CURRICULUM VITAE
+
+% The title (name) with a horizontal rule under it
+% (optional argument typesets an object right-justified across from name
+%  as well)
+%
+% Usage: \makeheading{name}
+%        OR
+%        \makeheading[right_object]{name}
+%
+% Place at top of document. It should be the first thing.
+% If ``right_object'' is provided in the square-braced optional
+% argument, it will be right justified on the same line as ``name'' at
+% the top of the CV. For example:
+%
+%       \makeheading[\emph{Curriculum vitae}]{Your Name}
+%
+% will put an emphasized ``Curriculum vitae'' at the top of the document
+% as a title. Likewise, a picture could be included:
+%
+%   \makeheading[\includegraphics[height=1.5in]{my_picutre}]{Your Name}
+%
+% the picture will be flush right across from the name.
+\newcommand{\makeheading}[2][]%
+        {\hspace*{-\marginparsep minus \marginparwidth}%
+         \begin{minipage}[t]{\textwidth+\marginparwidth+\marginparsep}%
+             {\large \bfseries #2 \hfill #1}\\[-0.15\baselineskip]%
+                 \rule{\columnwidth}{1pt}%
+         \end{minipage}}
+
+%%% SECTION HEADINGS
+
+% The section headings. Flush left in small caps down pseudo-margin.
+%
+% Usage: \section{section name}
+\renewcommand{\section}[1]{\pagebreak[3]%
+    \vspace{1.3\baselineskip}%
+    \phantomsection\addcontentsline{toc}{section}{#1}%
+    \noindent\llap{\scshape\smash{\parbox[t]{\marginparwidth}{\hyphenpenalty=10000\raggedright #1}}}%
+    \vspace{-\baselineskip}\par}
+
+%%% LISTS
+
+% This macro alters a list by removing some of the space that follows the list
+% (is used by lists below)
+\newcommand*\fixendlist[1]{%
+    \expandafter\let\csname preFixEndListend#1\expandafter\endcsname\csname end#1\endcsname
+    \expandafter\def\csname end#1\endcsname{\csname preFixEndListend#1\endcsname\vspace{-0.6\baselineskip}}}
+
+% These macros help ensure that items in outer-type lists do not get
+% separated from the next line by a page break
+% (they are used by lists below)
+\let\originalItem\item
+\newcommand*\fixouterlist[1]{%
+    \expandafter\let\csname preFixOuterList#1\expandafter\endcsname\csname #1\endcsname
+    \expandafter\def\csname #1\endcsname{\csname preFixOuterList#1\endcsname\let\oldItem\item\def\item{\pagebreak[2]\oldItem}}
+    \expandafter\let\csname preFixOuterListend#1\expandafter\endcsname\csname end#1\endcsname
+    \expandafter\def\csname end#1\endcsname{\let\item\oldItem\csname preFixOuterListend#1\endcsname}}
+\newcommand*\fixinnerlist[1]{%
+    \expandafter\let\csname preFixInnerList#1\expandafter\endcsname\csname #1\endcsname
+    \expandafter\def\csname #1\endcsname{\let\oldItem\item\let\item\originalItem\csname preFixInnerList#1\endcsname}
+    \expandafter\let\csname preFixInnerListend#1\expandafter\endcsname\csname end#1\endcsname
+    \expandafter\def\csname end#1\endcsname{\csname preFixInnerListend#1\endcsname\let\item\oldItem}}
+
+% An itemize-style list with lots of space between items
+%
+% Usage:
+%   \begin{outerlist}
+%       \item ...    % (or \item[] for no bullet)
+%   \end{outerlist}
+\newlist{outerlist}{itemize}{3}
+    \setlist[outerlist]{label=\enskip\textbullet,leftmargin=*}
+    \fixendlist{outerlist}
+    \fixouterlist{outerlist}
+
+% An environment IDENTICAL to outerlist that has better pre-list spacing
+% when used as the first thing in a \section
+%
+% Usage:
+%   \begin{lonelist}
+%       \item ...    % (or \item[] for no bullet)
+%   \end{lonelist}
+\newlist{lonelist}{itemize}{3}
+    \setlist[lonelist]{label=\enskip\textbullet,leftmargin=*,partopsep=0pt,topsep=0pt}
+    \fixendlist{lonelist}
+    \fixouterlist{lonelist}
+
+% An itemize-style list with little space between items
+%
+% Usage:
+%   \begin{innerlist}
+%       \item ...    % (or \item[] for no bullet)
+%   \end{innerlist}
+\newlist{innerlist}{itemize}{3}
+    \setlist[innerlist]{label=\enskip -,leftmargin=*,parsep=0pt,itemsep=0pt,topsep=0pt,partopsep=0pt}
+    \fixinnerlist{innerlist}
+
+% An environment IDENTICAL to innerlist that has better pre-list spacing
+% when used as the first thing in a \section
+%
+% Usage:
+%   \begin{loneinnerlist}
+%       \item ...    % (or \item[] for no bullet)
+%   \end{loneinnerlist}
+\newlist{loneinnerlist}{itemize}{3}
+    \setlist[loneinnerlist]{label=\enskip\textbullet,leftmargin=*,parsep=0pt,itemsep=0pt,topsep=0pt,partopsep=0pt}
+    \fixendlist{loneinnerlist}
+    \fixinnerlist{loneinnerlist}
+
+%%% EXTRA SPACE
+
+% To add some paragraph space between lines.
+% This also tells LaTeX to preferably break a page on one of these gaps
+% if there is a needed pagebreak nearby.
+\newcommand{\blankline}{\quad\pagebreak[3]}
+\newcommand{\halfblankline}{\quad\vspace{-0.5\baselineskip}\pagebreak[3]}
+
+%%% FORMATTING MACROS
+
+% Uses hyperref to link DOI
+\newcommand\doilink[1]{\href{http://dx.doi.org/#1}{#1}}
+\newcommand\doi[1]{doi:\doilink{#1}}
+
+% For \url{SOME_URL}, links SOME_URL to the url SOME_URL
+\providecommand*\url[1]{\href{#1}{#1}}
+% Same as above, but pretty-prints SOME_URL in teletype fixed-width font
+\renewcommand*\url[1]{\href{#1}{\texttt{#1}}}
+
+% For \email{ADDRESS}, links ADDRESS to the url mailto:ADDRESS
+\providecommand*\email[1]{\href{mailto:#1}{#1}}
+% Same as above, but pretty-prints ADDRESS in teletype fixed-width font
+%\renewcommand*\email[1]{\href{mailto:#1}{\texttt{#1}}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%% End Helper Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{document}
+
+% private heading
+\makeheading[]{
+Jeremy Orosco   \hfill \normalsize{\email{jrorosco@eng.ucsd.edu}} \\
+\mbox{}         \hspace{13.5cm} \normalsize{\href{https://www.jeremyorosco.info}{www.jeremyorosco.info}}
+\vspace{-0.5cm}
+}
+
+
+%------------------------------------------------------------------------------
+% CITIZENSHIP
+%------------------------------------------------------------------------------
+\section{Citizenship}
+U.S. Citizen
+
+
+%------------------------------------------------------------------------------
+% EDUCATION / ACADEMIA
+%------------------------------------------------------------------------------
+\section{Education / Academia}
+
+\textbf{University of California San Diego} \\
+\textit{Postdoctoral Scholar} \hfill July 2019--July 2021\\
+\textit{PI: James Friend}
+\begin{innerlist}
+    \item UC President's Postdoctoral Fellowship (2020--2021)
+    \item Research areas:
+        \begin{itemize}
+            \item development of contemporary theory for atomization phenomenon
+            \item nozzle-free micro-scale droplet generation
+            \item ultrasonic modulation of cell signaling
+        \end{itemize}
+\end{innerlist}
+
+\textbf{University of California San Diego} \\
+\textit{Ph.D. Mechanical Engineering} \hfill 2019
+\begin{innerlist}
+    \item UC President's Dissertation Year Fellowship (2018--2019)
+    \item San Diego Fellowship (2014--2018)
+    \item Graduate Student of the Year
+    \item Interests and expertise:
+        \begin{itemize}
+            \item applied math, control and stability, identification and estimation, nonlinear/nonconvex optimization, fluid mechanical systems, condensed matter systems, radiative mechanics
+            \item generalized differential models for anomalous spectroscopic dispersion
+            \item generalized frequency-domain analysis for emergent nonlocal dynamics in many-body systems
+            \item predictive analytics with machine learning models / feature engineering
+        \end{itemize}
+\end{innerlist}
+
+\blankline
+
+\textbf{University of California San Diego} \\
+\textit{M.S. Mechanical Engineering} \hfill 2016
+\begin{innerlist}
+    \item San Diego Fellowship (2014--2018)
+    \item Courses (GPA: {\bf{3.88}}):
+        \begin{itemize}
+            \item MAE 280 A/B: Linear Systems and Control
+            \item MAE 288 A: Optimal Control
+            \item MAE 283 A: Open-loop System Identification
+            \item MAE 283 B: Closed-loop System Identification and Approximate Control
+            \item MAE 284: Robust and Multivariable Control
+            \item MATH 271 A/B/C: Nonlinear Optimization (UC/EQC/IEQC)
+            \item MAE 210 A/B/C: Fluid Mechanics and Hydrodynamic Stability
+            \item MAE 208: Engineering Mathematics
+        \end{itemize}
+\end{innerlist}
+
+\blankline
+
+\textbf{University of California San Diego} \\
+\textit{B.S. Mechanical Engineering} \hfill 2014
+\begin{innerlist}
+\item Provost Honors, Warren College Honor Society
+\item Selected Courses:
+\begin{itemize}
+\item MAE 143 A/B/C: Signals, CT/DT Control Systems
+\item MAE 144: Embedded Control and Robotics
+\item MATH 120 A: Complex Analysis
+\end{itemize}
+\end{innerlist}
+
+\blankline
+
+\textbf{MiraCosta Community College} \\
+\textit{A.A. Pre-Engineering} \hfill 2011
+\begin{innerlist}
+    \item Medal of Honor Scholarship
+    \item President's List, President's Permanent Honor Roll
+    \item President, Phi Theta Kappa Honor Society
+    \item All California Academic Team
+\end{innerlist}
+
+
+%------------------------------------------------------------------------------
+% EMPLOYMENT
+%------------------------------------------------------------------------------
+\section{Employment}
+
+\textbf{Controls Engineer (intern)} \hfill June 2016--December 2016 \\
+\textit{Cymer / ASML}
+\begin{innerlist}
+    \item Individually undertaken project to research, design, and implement automation upgrades to existing experimental apparatus.
+    \item Machine vision driven feedback loop based on observation of a modulated hydrodynamic instability and multi-stage actuation of an imaging assembly.
+    \item Applied technical skillsets based on project deliverables:
+        \begin{innerlist}
+            \item mechanical design (~5\%)
+            \item software/hardware high- and low-level interfacing (~15\%)
+            \item hydrodynamics and hydrodynamic instabilities (~15\%)
+            \item control theory (~25\%)
+            \item machine vision (~40\%)
+        \end{innerlist}
+\end{innerlist}
+
+
+%------------------------------------------------------------------------------
+% PUBLICATIONS
+%------------------------------------------------------------------------------
+\section{Publications}
+
+Orosco, J. and Friend, J.: 1-Dimensional fast acoustic streaming. (in preparation)
+
+\blankline
+
+Orosco, J. and Friend, J.: Novel multiscale approach for modeling and analysis of nonlinear continuous systems. (in preparation)
+
+\blankline
+
+Orosco, J. and Coimbra, C.~F.~M.: Simple expression for low-expense approximation of the Bloch-Gr\"{u}neisen intrinsic resistivity. (in preparation)
+
+\blankline
+
+Orosco, J. and Coimbra, C.~F.~M.: Temperature-dependent infrared optical and radiative properties of platinum. International Journal of Heat and Mass Transfer (2019) \href{https://doi.org/10.1016/j.ijheatmasstransfer.2019.118471}{\textbf{Link}} - \href{https://www.jeremyorosco.info/files/2019c_Orosco_Coimbra.pdf}{\textbf{PDF}}
+
+\blankline
+
+Orosco, J. and Coimbra, C.~F.~M.: Temperature-dependent carrier transport: Low-complexity model for the infrared optical and radiative properties of nickel. Journal of Applied Physics (2019) \href{https://doi.org/10.1063/1.5091792}{\textbf{Link}} - \href{https://www.jeremyorosco.info/files/2019b_Orosco_Coimbra.pdf}{\textbf{PDF}}
+
+\blankline
+
+Orosco, J. and Coimbra, C.~F.~M.: Anomalous carrier transport model for broadband infrared absorption in metals. Physical Review B (2018) \href{https://doi.org/10.1103/PhysRevB.98.235118}{\textbf{Link}} - \href{https://www.jeremyorosco.info/files/2018d_Orosco_Coimbra.pdf}{\textbf{PDF}}
+
+\blankline
+
+Orosco, J. and Coimbra, C.~F.~M.: Variable order modeling of nonlocal emergence in many-body systems: Application to radiative dispersion. Physical Review E (2018) \href{https://doi.org/10.1103/PhysRevE.98.032208}{\textbf{Link}} - \href{https://www.jeremyorosco.info/files/2018c_Orosco_Coimbra.pdf}{\textbf{PDF}}
+
+\blankline
+
+Orosco, J. and Coimbra, C.~F.~M.: On a causal dispersion model for the optical properties of metals. Applied Optics (2018) \href{https://doi.org/10.1364/AO.57.005333}{\textbf{Link}} - \href{https://www.jeremyorosco.info/files/2018b_Orosco_Coimbra.pdf}{\textbf{PDF}}
+
+\blankline
+
+Orosco, J. and Coimbra, C.~F.~M.: Optical response of thin amorphous films to infrared radiation. Physical Review B (2018) \href{https://doi.org/10.1103/PhysRevB.97.094301}{\textbf{Link}} - \href{https://www.jeremyorosco.info/files/2018a_Orosco_Coimbra.pdf}{\textbf{PDF}}
+
+\blankline
+
+Orosco, J. and Coimbra, C.~F.~M.: On the control and stability of variable-order mechanical systems. Nonlinear Dynamics (2016) \href{http://dx.doi.org/10.1007/s11071-016-2916-9}{\textbf{Link}} - \href{https://www.jeremyorosco.info/files/2016_Orosco_Coimbra.pdf}{\textbf{PDF}}
+
+
+%------------------------------------------------------------------------------
+% CONFERENCES
+%------------------------------------------------------------------------------
+\section{Conferences}
+
+Orosco, J. and Coimbra, C.~F.~M.: Thermophysical model for the infrared emissivity of metals. Paper and presentation. AIAA SciTech Forum (2019) \href{https://doi.org/10.2514/6.2019-1280}{\textbf{Link}} - \href{https://www.jeremyorosco.info/files/2019a_Orosco_Coimbra.pdf}{\textbf{PDF}}
+
+\blankline
+
+Orosco, J. and Coimbra, C.~F.~M.: Causal Models for Gauss-Lorentz Response of Solid Media to Radiative Excitation. Poster session. ASME MEED Conference (2018) \href{https://www.jeremyorosco.info/files/36x48_asme_conference.pdf}{\textbf{PDF}}
+
+
+%------------------------------------------------------------------------------
+% MANUSCRIPT REVIEW
+%------------------------------------------------------------------------------
+\section{Manuscript Review}
+
+\textbf{Elsevier's \href{http://www.journals.elsevier.com/energy/}{Energy}, The International Journal} \hfill 2014--Present
+
+\blankline
+
+\textbf{Springer's \href{http://link.springer.com/journal/11071}{Nonlinear Dynamics}, An International Journal of Nonlinear Dynamics and Chaos in Engineering Systems} \hfill 2016--Present
+
+\blankline
+
+\textbf{Elsevier's \href{http://www.journals.elsevier.com/chaos-solitons-and-fractals/}{Chaos, Solitons \& Fractals}, An interdisciplinary journal of nonlinear science} \hfill 2016--Present
+
+\blankline
+
+\textbf{Springer's \href{http://link.springer.com/journal/10915}{Journal of Scientific Computing}} \hfill 2016--Present
+
+\blankline
+
+\textbf{AIP's \href{http://aip.scitation.org/journal/phf}{Physics of Fluids}} \hfill 2017--Present
+
+\blankline
+
+\textbf{Elsevier's \href{https://www.journals.elsevier.com/solar-energy/}{Solar Energy}, The Official Journal of the International Solar Energy Society} \hfill 2018--Present
+
+\blankline
+
+\textbf{The Optical Society's \href{https://www.osapublishing.org/ao/home.cfm}{Applied Optics}} \hfill 2018--Present
+
+\blankline
+
+\textbf{Elsevier's \href{https://www.journals.elsevier.com/international-journal-of-non-linear-mechanics}{International Journal of Non-Linear Mechanics}} \hfill 2018--Present
+
+\blankline
+
+\textbf{The Optical Society's \href{https://www.osapublishing.org/josaa/home.cfm}{Journal of the Optical Society of America A}} \hfill 2020--Present
+
+\blankline
+
+\textbf{The Optical Society's \href{https://www.osapublishing.org/ol/home.cfm}{Optics Letters}} \hfill 2020--Present
+
+\blankline
+
+\textbf{Elsevier's \href{https://www.sciencedirect.com/journal/communications-in-nonlinear-science-and-numerical-simulation}{Communications in Nonlinear Science and Numerical Simulation}} \hfill 2020--Present
+
+
+%------------------------------------------------------------------------------
+% PROFESSIONAL MEMBERSHIPS
+%------------------------------------------------------------------------------
+\section{Professional Memberships}
+
+\textbf{The American Institute of Aeronautics and Astronautics (\href{https://www.aiaa.org/}{AIAA})} \hfill
+2018--Present
+
+\blankline
+
+\textbf{American Society of Mechanical Engineers (\href{https://www.asme.org/about-asme}{ASME})} \hfill 2017--Present
+
+\blankline
+
+\textbf{The Optical Society (\href{https://www.osa.org/en-us/about\_osa/}{OSA})} \hfill
+2018--Present
+
+\blankline
+
+\textbf{Society of Industrial and Applied Mathematics (\href{https://www.siam.org/about/}{SIAM})} \hfill 2017--Present
+
+\blankline
+
+\textbf{American Physical Society (\href{https://www.aps.org/}{APS})} \hfill 2020--Present
+
+\blankline
+
+\textbf{Acoustical Society of America (\href{https://acousticalsociety.org/}{ASA})} \hfill 2020--Present
+
+
+%------------------------------------------------------------------------------
+% PROJECTS
+%------------------------------------------------------------------------------
+\section{Selected\newline Projects}
+
+\textbf{Solar Power Variability Management (CEC grant EPC-14-008)}
+\begin{innerlist}
+    \item \href{https://www.energy.gov/lpo/california-valley-solar-ranch}{California Valley Solar Ranch} (250MW, PV)
+        \begin{innerlist}
+            \item State of the art machine learning models for power output forecasts
+            \item Novel memory-based feature sets engineered using cutting-edge mathematics
+        \end{innerlist}
+    \item \href{https://www.energy.gov/lpo/ivanpah}{Ivanpah Solar Electric Generating System} (392MW, CSP)
+        \begin{innerlist}
+            \item MISO identification-based model of large-scale solar power plant dynamics
+            \item Determination of spurious plant operation behaviors based on pre- and post-modeling analysis
+        \end{innerlist}
+\end{innerlist}
+
+\blankline
+
+\textbf{Self-balancing Robot - \href{https://youtu.be/z70l3OUy9N4?t=25}{MIP}}
+\begin{innerlist}
+    \item Individual capstone controls project
+    \item Digital implementation of continuous time modeling and control design
+\end{innerlist}
+
+\blankline
+
+\textbf{Fly Righting Response Experimentation Device - \href{https://sites.google.com/a/eng.ucsd.edu/156b-2014-spring-team16/}{Fly2R}}
+\begin{innerlist}
+    \item Team capstone mechanical design project
+    \item Developed for UCSD's Pharmacology Department for use with experimentation
+    \item Received Departmental Best Project Award
+\end{innerlist}
+
+\blankline
+
+\textbf{Portable Solar Powered Sensing Station - \href{https://goo.gl/photos/JpdreuoXUUGJqF1z7}{get(Sol)}}
+\begin{innerlist}
+    \item Individual research-based design project
+    \item Self-sustaining/monitoring sensing station, internal web/data management
+    \item 6+ month uninterrupted runtime (unplugged, zero maintenance)
+\end{innerlist}
+
+
+%------------------------------------------------------------------------------
+% AWARDS
+%------------------------------------------------------------------------------
+\section{Awards and Distinctions}
+
+\textbf{{\href{https://ppfp.ucop.edu/info/fellowship-recipients/hiring-incentive.html}{UC President's Postdoctoral Fellowship}}} \hfill 2020--2021
+\begin{innerlist}
+    \item 1-Year scholarship: tuition, stipend, and tenure track UC hiring incentive
+\end{innerlist}
+
+\textbf{{UC President's Dissertation Year Fellowship}} \hfill 2018--2019
+\begin{innerlist}
+    \item 1-Year scholarship: tuition and stipend
+\end{innerlist}
+
+\textbf{{San Diego Fellowship}} \hfill 2014--2018
+\begin{innerlist}
+    \item 4-Year scholarship: tuition and stipend
+\end{innerlist}
+
+\textbf{MAE Department Graduate Student of the Year} \hfill Spring 2019
+
+\textbf{MAE Department Best Project: \href{https://sites.google.com/a/eng.ucsd.edu/156b-2014-spring-team16/}{Fly2R}} \hfill Spring 2014
+
+\textbf{{UCSD Alumni Leadership Scholar}} \hfill July 2012
+
+\textbf{\href{http://www.coca-colascholarsfoundation.org/}{Coca-Cola Scholar}} \hfill March 2010
+
+\textbf{{MiraCosta College Medal of Honor Scholar}} \hfill Apr 2010
+
+\textbf{{MiraCosta College Foundation Scholar}} \hfill June 2010
+
+
+%------------------------------------------------------------------------------
+% MENTORSHIP
+%------------------------------------------------------------------------------
+\section{Mentorship}
+
+\textbf{Anthony Nguyen, MAP}
+\begin{innerlist}
+    \item high school outreach research project, Summer 2018
+    \item accepted to and enrolled in UCSD's aerospace engineering major
+    \item current contributing member of Coimbra Research Group
+\end{innerlist}
+
+\blankline
+
+\textbf{Jamiree Harrison, UC LEADS}
+\begin{innerlist}
+    \item undergraduate research project, Summer 2017
+    \item Ph.D. student at UCSB beginning Fall 2019
+\end{innerlist}
+
+\blankline
+
+\textbf{Marcel Louis, STARS}
+\begin{innerlist}
+    \item undergraduate research project, Summer 2015
+    \item Ph.D. student at Princeton beginning Fall 2019
+\end{innerlist}
+
+\blankline
+
+\textbf{Mackenzie Cottle}
+\begin{innerlist}
+    \item high school outreach research project, Summer 2014
+    \item currently enrolled in UCSD's mechanical engineering major
+\end{innerlist}
+
+\blankline
+
+
+%------------------------------------------------------------------------------
+% TECHNICAL SKILLS
+%------------------------------------------------------------------------------
+\section{Technical Skillsets}
+
+\textbf{Programming}
+\begin{innerlist}
+    \item Syntax: Python, Matlab, Mathematica, C/C++, Git/SVN, \LaTeX, Bibtex
+    \item Environment: $^*$nix, Windows
+    \item Frameworks: XGBoost, SKLearn, Pandas, CVXPY
+\end{innerlist}
+
+\blankline
+
+\textbf{Data Science}
+\begin{innerlist}
+    \item Data quality assessment
+    \item Feature engineering
+    \item Regressive models
+    \item Time series analysis
+\end{innerlist}
+
+\blankline
+
+\textbf{Design and Simulation}
+\begin{innerlist}
+    \item Eagle PCB, Inventor and Autocad, SolidWorks
+\end{innerlist}
+
+\blankline
+
+\textbf{Circuits and Electronics}
+\begin{innerlist}
+    \item PCB (SMD) prototyping and design, SMD hand-soldering
+    \item Signal conditioning, sensing, actuation
+    \item $\upmu$C: BeagleBone, Arduino, Raspberry Pi
+\end{innerlist}
+
+\blankline
+
+\textbf{Rapid Prototyping}
+\begin{innerlist}
+    \item Machining, lasercamm
+\end{innerlist}
+
+\blankline
+
+\textbf{Graphical Design}
+\begin{innerlist}
+    \item Adobe Photoshop and Illustrator
+\end{innerlist}
+
+% \textbf{Operations Manager} \hfill February 2005--February 2008 \\
+% \textit{24-7 The Nationwide Notary Network, San Clemente}
+% \begin{innerlist}
+%     \item Wrote and implemented company Standard Operating Platform (SOP).
+%     \item Oversaw: client accounts, SOP implementation, staffing, revenue streams, website development.
+%     \item Primary clientele: lending, escrow, and title offices.
+% \end{innerlist}
+
+% \blankline
+
+% \textbf{Site Manager} \hfill March 2001--February 2005 \\
+% \textit{Panasonic Company West, Costa Mesa}
+% \begin{innerlist}
+%     \item Coordinated opening of first branded storefront in the nation.
+%     \item Initiated vendor accounts, originated warehouse and showroom layout.
+%     \item Oversaw: staffing, training, inventory control, merchandising, sales.
+% \end{innerlist}
+
+
+%------------------------------------------------------------------------------
+% REFERENCES
+%------------------------------------------------------------------------------
+% \mbox{} \\[3 cm]
+% \mbox{(references / previous employment available upon request)}
+
+
+
+
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% End CV Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------%
+% The following is copyright and licensing information for
+% redistribution of this LaTeX source code; it also includes a liability
+% statement. If this source code is not being redistributed to others,
+% it may be omitted. It has no effect on the function of the above code.
+%----------------------------------------------------------------------%
+% Copyright (c) 2007, 2008, 2009, 2010, 2011 by Theodore P. Pavlic
+%
+% Unless otherwise expressly stated, this work is licensed under the
+% Creative Commons Attribution-Noncommercial 3.0 United States License. To
+% view a copy of this license, visit
+% http://creativecommons.org/licenses/by-nc/3.0/us/ or send a letter to
+% Creative Commons, 171 Second Street, Suite 300, San Francisco,
+% California, 94105, USA.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+% OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+% IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+% CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+% TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+% SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%----------------------------------------------------------------------%
